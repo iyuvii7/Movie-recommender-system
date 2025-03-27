@@ -10,7 +10,7 @@ OMDB_API_KEY = "6b1718f6"
 
 # function to download_pickle_file
 def download_pickle_file(file_id, save_path):
-    url = f"https://drive.google.com/uc?export=download&id={file_id}
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
     response = requests.get(url)
 
     if response.status_code == 200:
