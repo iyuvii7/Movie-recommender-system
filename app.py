@@ -12,7 +12,7 @@ OMDB_API_KEY = "6b1718f6"
 gdrive_url = "https://drive.google.com/uc?id=1PTvLbNVwfqhWHuWewC2ylsFUTJmvBcxh"
 
 # Define local file path
-file_path = "similarity.pkl"
+file_path = 'similarity.pkl'
 
 # Download file if it doesn't exist
 if not os.path.exists(file_path):
