@@ -8,28 +8,28 @@ from numpy.matrixlib.defmatrix import matrix
 # Replace with your own OMDb API Key (Get it from https://www.omdbapi.com/apikey.aspx)
 OMDB_API_KEY = "6b1718f6"
 
-# function to download_pickle_file
-def download_pickle_file(file_id, save_path):
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
-    response = requests.get(url)
+# Google Drive direct link (replace FILE_ID with your actual ID)
+gdrive_url = "https://drive.google.com/uc?id=1PTvLbNVwfqhWHuWewC2ylsFUTJmvBcxh"
 
-    if response.status_code == 200:
-        with open(save_path, "wb") as f:
-            f.write(response.content)
-    else:
-        print("Failed to download the file.")
+# Define local file path
+file_path = "similarity.pkl"
 
-# google drive file id of similarity.pkl
-SIMILARITY_FILE_ID = "1PTvLbNVwfqhWHuWewC2ylsFUTJmvBcxh"
-SIMILARITY_PATH = "similarity.pkl"
+# Download file if it doesn't exist
+if not os.path.exists(file_path):
+    print("Downloading similarity.pkl from Google Drive...")
+    response = requests.get(gdrive_url, stream=True)
+    with open(file_path, "wb") as file:
+        for chunk in response.iter_content(chunk_size=8192):
+            file.write(chunk)
+    print("Download complete!")
 
-# download if not already present
-if not os.path.exists(SIMILARITY_PATH):
-    download_pickle_file(SIMILARITY_FILE_ID, SIMILARITY_PATH)
-
-# load the similarity matrix
-with open(SIMILARITY_PATH, "rb") as f:
+# Load the file
+with open(file_path, "rb") as f:
     similarity = pickle.load(f)
+
+print("similarity.pkl loaded successfully!")
+
+
 
 def fetch_omdb_poster(movie_name):
     """Fetch movie poster from OMDb API"""
