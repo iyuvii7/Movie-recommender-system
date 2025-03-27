@@ -1,10 +1,35 @@
 import pickle
 import streamlit as st
 import requests
+import os
+
+from numpy.matrixlib.defmatrix import matrix
 
 # Replace with your own OMDb API Key (Get it from https://www.omdbapi.com/apikey.aspx)
 OMDB_API_KEY = "6b1718f6"
 
+# function to download_pickle_file
+def download_pickle_file(file_id, save_path):
+    url = f"https://drive.google.com/uc?export=download&id={file_id}
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        with open(save_path, "wb") as f:
+            f.write(response.content)
+    else:
+        print("Failed to download the file.")
+
+# google drive file id of similarity.pkl
+SIMILARITY_FILE_ID = "1PTvLbNVwfqhWHuWewC2ylsFUTJmvBcxh"
+SIMILARITY_PATH = "similarity.pkl"
+
+# download if not already present
+if not os.path.exists(SIMILARITY_PATH):
+    download_pickle_file(SIMILARITY_FILE_ID, SIMILARITY_PATH)
+
+# load the similarity matrix
+with open(SIMILARITY_PATH, "rb") as f:
+    similarity = pickle.load(f)
 
 def fetch_omdb_poster(movie_name):
     """Fetch movie poster from OMDb API"""
