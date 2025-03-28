@@ -2,34 +2,28 @@ import pickle
 import streamlit as st
 import requests
 import os
-
-from numpy.matrixlib.defmatrix import matrix
+import gdown
 
 # Replace with your own OMDb API Key (Get it from https://www.omdbapi.com/apikey.aspx)
 OMDB_API_KEY = "6b1718f6"
 
-# Google Drive direct link (replace FILE_ID with your actual ID)
-gdrive_url = "https://drive.google.com/uc?id=1PTvLbNVwfqhWHuWewC2ylsFUTJmvBcxh"
+# Google Drive file ID
+file_id = "1PTvLbNVwfqhWHuWewC2ylsFUTJmvBcxh"
+file_path = "similarity.pkl"
 
-# Define local file path
-file_path = 'similarity.pkl'
-
-# Download file if it doesn't exist
+# Download the file only if it does not exist
 if not os.path.exists(file_path):
-    print("Downloading similarity.pkl from Google Drive...")
-    response = requests.get(gdrive_url, stream=True)
-    with open(file_path, "wb") as file:
-        for chunk in response.iter_content(chunk_size=8192):
-            file.write(chunk)
-    print("Download complete!")
+    download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    gdown.download(download_url, file_path, quiet=False)
+    print("Downloaded similarity.pkl")
+else:
+    print("similarity.pkl already exists, skipping download.")
 
-# Load the file
+# Load the similarity matrix
 with open(file_path, "rb") as f:
     similarity = pickle.load(f)
 
 print("similarity.pkl loaded successfully!")
-
-
 
 def fetch_omdb_poster(movie_name):
     """Fetch movie poster from OMDb API"""
@@ -84,12 +78,12 @@ st.markdown("""
             border-radius: 10px;
         }
         .movie-title {
-            font-size: 20px;  /* Increased size */
+            font-size: 20px;
             font-weight: bold;
-            color: #FFFFFF;  /* Bright white */
+            color: #FFFFFF;
             margin-top: 10px;
             padding: 5px;
-            background: rgba(255, 255, 255, 0.1); /* Light background */
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
         }
     </style>
@@ -98,7 +92,6 @@ st.markdown("""
 st.markdown("<div class='title'>🎬 Movie Recommender System</div>", unsafe_allow_html=True)
 
 movies = pickle.load(open("movies_list.pkl", "rb"))
-similarity = pickle.load(open("similarity.pkl", "rb"))
 
 movie_list = movies['title'].values
 selected_movie = st.selectbox("🔍 Type or Select a movie from the dropdown", movie_list)
@@ -114,9 +107,10 @@ if st.button('🔮 Show Recommendations'):
                     <a href="{imdb_url}" target="_blank">
                         <img src="{poster}" width="180">
                     </a>
-                    <div class='movie-title'>{title}</div>  <!-- Improved visibility -->
+                    <div class='movie-title'>{title}</div>
                 </div>
             """, unsafe_allow_html=True)
+
 st.markdown("""
     <hr style="border:1px solid white;">
     <div style="text-align:center; font-size:16px; color:#CCCCCC;">
